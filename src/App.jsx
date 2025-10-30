@@ -3,6 +3,7 @@ import Header from './components/Header';
 import SearchForm from './components/SearchForm';
 import ArtworkGrid from './components/ArtworkGrid';
 import DetailModal from './components/DetailModal';
+import useLocalStorage from './hooks/useLocalStorage';
 import './App.css';
 
 function App() {
@@ -12,6 +13,7 @@ function App() {
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
   const [selectedArt, setSelectedArt] = useState(null);
+  const [favorites, setFavorites] = useLocalStorage('museumFavorites', []);
 
   const MET_API_SEARCH_URL = "https://collectionapi.metmuseum.org/public/collection/v1/search";
   const MET_API_OBJECT_URL = "https://collectionapi.metmuseum.org/public/collection/v1/objects";
@@ -104,6 +106,15 @@ function App() {
     setSelectedArt(null);
   };
 
+  const handleToggleFavorite = (art) => {
+    const artID = art.objectID;
+    if (favorites.includes(artID)) {
+      setFavorites(prevFavorites => prevFavorites.filter(id => id !== artID));
+    } else {
+      setFavorites(prevFavorites => [...prevFavorites, artID]);
+    }
+  };
+
   return (
     <div className="App">
       <Header />
@@ -121,6 +132,8 @@ function App() {
         art={selectedArt}
         show={selectedArt !== null}
         onHide={handleCloseModal}
+        favorites={favorites}
+        onToggleFavorite={handleToggleFavorite}
       />
     </div>
   );

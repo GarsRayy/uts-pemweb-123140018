@@ -1,8 +1,14 @@
 import React from 'react';
 import { Modal, Button, Image, Table, Badge } from 'react-bootstrap';
 
-function DetailModal({ art, show, onHide }) {
+function DetailModal({ art, show, onHide, onToggleFavorite, favorites }) {
   if (!art) return null;
+
+  const isFavorited = favorites.includes(art.objectID);
+
+  const handleFavoriteClick = () => {
+    onToggleFavorite(art);
+  };
 
   return (
     <Modal show={show} onHide={onHide} size="lg" centered>
@@ -53,6 +59,12 @@ function DetailModal({ art, show, onHide }) {
         )}
       </Modal.Body>
       <Modal.Footer>
+        <Button 
+          variant={isFavorited ? "outline-danger" : "danger"} 
+          onClick={handleFavoriteClick}
+        >
+          {isFavorited ? "Remove from Favorites" : "❤️ Add to Favorites"}
+        </Button>
         <Button variant="secondary" onClick={onHide}>
           Close
         </Button>
