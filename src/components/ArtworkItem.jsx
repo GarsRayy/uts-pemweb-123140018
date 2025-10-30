@@ -1,9 +1,13 @@
 import React from 'react';
 import { Card } from 'react-bootstrap';
 
-function ArtworkItem({ art }) {
+function ArtworkItem({ art, onClick }) {
+  const handleClick = () => {
+    onClick(art);
+  };
+
   return (
-    <Card className="h-100 shadow-sm">
+    <Card className="h-100 shadow-sm" onClick={handleClick} style={{ cursor: 'pointer' }}>
       <Card.Img 
         variant="top" 
         src={art.primaryImageSmall} 

@@ -2,7 +2,7 @@ import React from 'react';
 import { Container, Row, Col, Alert, Spinner } from 'react-bootstrap';
 import ArtworkItem from './ArtworkItem';
 
-function ArtworkGrid({ artworks, isLoading, error }) {
+function ArtworkGrid({ artworks, isLoading, error, onArtworkClick }) {
   if (isLoading) {
     return (
       <Container className="text-center my-5">
@@ -40,7 +40,7 @@ function ArtworkGrid({ artworks, isLoading, error }) {
       <Row xs={1} sm={2} md={3} lg={4} className="g-4">
         {artworks.map(art => (
           <Col key={art.objectID}>
-            <ArtworkItem art={art} />
+            <ArtworkItem art={art} onClick={onArtworkClick} />
           </Col>
         ))}
       </Row>
