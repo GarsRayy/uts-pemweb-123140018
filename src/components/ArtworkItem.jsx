@@ -12,7 +12,7 @@ function ArtworkItem({ art, onClick }) {
         variant="top" 
         src={art.primaryImageSmall} 
         alt={art.title} 
-        style={{ height: '250px', objectFit: 'cover' }}
+        className="card-img-top"
       />
       <Card.Body>
         <Card.Title 
