@@ -1,25 +1,20 @@
 import React, { useState } from 'react';
 import { Form, Button, Row, Col, Container } from 'react-bootstrap';
-import { Search } from 'lucide-react'; // Import ikon search
+import { Search } from 'lucide-react';
 
-// Departments sekarang di-pass dari App.jsx
 function SearchForm({ onSearch, initialQuery, departments, isLoading }) {
-  const [searchTerm, setSearchTerm] = useState(initialQuery);
+  const [searchTerm, setSearchTerm] = useState(initialQuery || "monet"); // default value
   const [departmentId, setDepartmentId] = useState("");
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    // Validasi dasar
     if (!searchTerm.trim()) {
-      // Bisa tambahkan alert/feedback di sini
       return;
     }
     onSearch(searchTerm, departmentId);
   };
 
   return (
-    // Container ini akan otomatis ganti tema (dark/light)
-    // berkat `data-bs-theme` di <html>
     <Container as="section" className="my-4 p-4 bg-body-tertiary rounded shadow-sm">
       <Form onSubmit={handleSubmit}>
         <Row className="g-3 align-items-end">
@@ -31,7 +26,7 @@ function SearchForm({ onSearch, initialQuery, departments, isLoading }) {
                 placeholder="e.g., Monet, sunflowers, etc."
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
-                required // Validasi HTML5
+                required
               />
             </Form.Group>
           </Col>
@@ -41,7 +36,7 @@ function SearchForm({ onSearch, initialQuery, departments, isLoading }) {
               <Form.Select
                 value={departmentId}
                 onChange={(e) => setDepartmentId(e.target.value)}
-                disabled={isLoading} // disable saat departments di-load
+                disabled={isLoading}
               >
                 <option value="">{isLoading ? "Loading..." : "All Departments"}</option>
                 {departments.map(dep => (
@@ -53,8 +48,8 @@ function SearchForm({ onSearch, initialQuery, departments, isLoading }) {
             </Form.Group>
           </Col>
           <Col md={2}>
-            {/* Menggunakan style tombol dari snippet baru */}
-            <Button variant="primary" type="submit" className="w-100 d-flex align-items-center justify-content-center gap-2" style={{ backgroundColor: '#ea580c', borderColor: '#ea580c' }}>
+            {/* Menggunakan class 'btn-search' dari App.css */}
+            <Button variant="primary" type="submit" className="w-100 d-flex align-items-center justify-content-center gap-2 btn-search">
               <Search size={18} />
               Search
             </Button>

@@ -7,37 +7,30 @@ import AboutSection from './components/AboutSection';
 import useLocalStorage from './hooks/useLocalStorage';
 import './App.css';
 
+// API endpoints
+const MET_API_SEARCH_URL = "https://collectionapi.metmuseum.org/public/collection/v1/search";
+const MET_API_OBJECT_URL = "https://collectionapi.metmuseum.org/public/collection/v1/objects";
+const MET_API_DEPTS_URL = "https://collectionapi.metmuseum.org/public/collection/v1/departments";
+
 function App() {
-  // State dari proyek asli
   const [artworkIDs, setArtworkIDs] = useState(null);
   const [artworks, setArtworks] = useState([]);
-  const [isLoading, setIsLoading] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
   const [selectedArt, setSelectedArt] = useState(null);
   const [departments, setDepartments] = useState([]);
-
-  // State baru dari snippet (UI cakep)
-  // Menyimpan objek artwork lengkap, bukan hanya ID
   const [favorites, setFavorites] = useLocalStorage('museumFavorites', []);
   const [showFavorites, setShowFavorites] = useState(false);
-  const [darkMode, setDarkMode] = useState(true);
-  const [showAbout, setShowAbout] = useState(true); // Tampilkan "About" saat pertama kali load
 
-  // URL API
-  const MET_API_SEARCH_URL = "https://collectionapi.metmuseum.org/public/collection/v1/search";
-  const MET_API_OBJECT_URL = "https://collectionapi.metmuseum.org/public/collection/v1/objects";
-  const MET_API_DEPTS_URL = "https://collectionapi.metmuseum.org/public/collection/v1/departments";
+  // Light mode default
+  const [darkMode, setDarkMode] = useState(false);
 
-  // --- LOGIKA BARU UNTUK DARK MODE ---
-  // Ini akan menerapkan 'data-bs-theme' ke tag <html>
-  // sehingga react-bootstrap otomatis berganti tema
+  // Apply theme to bootstrap
   useEffect(() => {
     document.documentElement.dataset.bsTheme = darkMode ? 'dark' : 'light';
   }, [darkMode]);
 
-  // --- LOGIKA FETCH BARU (Digabung dari kedua versi) ---
-
-  // 1. Fetch departments saat aplikasi load
+  // Fetch departments
   useEffect(() => {
     const fetchDepartments = async () => {
       try {
@@ -51,13 +44,17 @@ function App() {
     fetchDepartments();
   }, []);
 
-  // 2. Handle Search (dari snippet baru, lebih efisien)
+  // Default search: "monet"
+  useEffect(() => {
+    setIsLoading(true);
+    handleSearch("monet", "");
+  }, []);
+
   const handleSearch = async (query, departmentId) => {
     setIsLoading(true);
     setError(null);
     setArtworks([]);
-    setShowFavorites(false); // Matikan mode favorit saat mencari
-    setShowAbout(false);     // Sembunyikan "About" saat mencari
+    setShowFavorites(false);
 
     try {
       const url = departmentId
@@ -69,12 +66,11 @@ function App() {
       const data = await res.json();
 
       if (data.objectIDs && data.objectIDs.length > 0) {
-        // Ambil 20 ID pertama
         setArtworkIDs(data.objectIDs.slice(0, 20));
       } else {
         setError('Tidak ada karya seni ditemukan. Coba kata kunci lain.');
         setIsLoading(false);
-        setArtworkIDs([]); // Set ke array kosong
+        setArtworkIDs([]);
       }
     } catch (err) {
       setError(err.message || 'Gagal mencari karya seni. Silakan coba lagi.');
@@ -82,12 +78,10 @@ function App() {
     }
   };
 
-  // 3. Fetch detail artwork berdasarkan objectIDs
-  // (Ini dieksekusi setelah state artworkIDs berubah)
+  // Fetch details for artworks
   useEffect(() => {
-    if (!artworkIDs) return; // Jangan lakukan apa-apa jika masih null
+    if (!artworkIDs) return;
     if (artworkIDs.length === 0) {
-      // Jika search tidak menghasilkan apa-apa
       setArtworks([]);
       setIsLoading(false);
       return;
@@ -97,30 +91,21 @@ function App() {
       try {
         const promises = artworkIDs.map(id =>
           fetch(`${MET_API_OBJECT_URL}/${id}`)
-            .then(res => {
-              if (res.ok) return res.json();
-              return null; // Kembalikan null jika ada error
-            })
-            .catch(() => null) // Kembalikan null jika fetch gagal
+            .then(res => res.ok ? res.json() : null)
+            .catch(() => null)
         );
-
         const results = await Promise.all(promises);
-        // Filter artwork yang valid (ada data & punya gambar)
         const validArtworks = results.filter(art => art && art.primaryImageSmall);
         setArtworks(validArtworks);
       } catch (err) {
-        console.error('Error fetching artwork details:', err);
-        setError('Gagal memuat detail karya seni.');
+        setError(`Gagal memuat detail karya seni: ${err.message}`);
       } finally {
         setIsLoading(false);
       }
     };
-
     fetchArtworkDetails();
   }, [artworkIDs]);
 
-  // --- LOGIKA FAVORIT BARU (dari snippet) ---
-  // Menyimpan seluruh objek, bukan hanya ID
   const addFavorite = (artwork) => {
     if (!favorites.find(fav => fav.objectID === artwork.objectID)) {
       setFavorites([...favorites, artwork]);
@@ -131,83 +116,39 @@ function App() {
     setFavorites(favorites.filter(fav => fav.objectID !== objectID));
   };
 
-  const isFavorite = (objectID) => {
-    return favorites.some(fav => fav.objectID === objectID);
-  };
-
-  // --- Handler untuk Modal ---
-  const handleArtworkClick = (art) => {
-    setSelectedArt(art);
-  };
-
-  const handleCloseModal = () => {
-    setSelectedArt(null);
-  };
-
-  // --- Variabel warna untuk komponen Non-Bootstrap (inline style) ---
-    const textColor = darkMode ? '#ffffff' : '#111827';
-    const textSecondary = darkMode ? '#9ca3af' : '#6b7280';
-    const borderColor = darkMode ? '#1f2937' : '#e5e7eb';
-    const hoverBg = darkMode ? '#1f2937' : '#f3f4f6';
-
+  const isFavorite = (objectID) => favorites.some(fav => fav.objectID === objectID);
 
   return (
-    // Kita tidak perlu set `backgroundColor` di div ini
-    // karena `data-bs-theme` di <html> akan mengaturnya
     <div className="App">
       <Header
         favoritesCount={favorites.length}
-        onShowFavorites={() => {
-          setShowFavorites(!showFavorites);
-          setShowAbout(false); // Sembunyikan about saat lihat favorit
-        }}
+        onShowFavorites={() => setShowFavorites(!showFavorites)}
         showingFavorites={showFavorites}
         darkMode={darkMode}
         onToggleDarkMode={() => setDarkMode(!darkMode)}
-        borderColor={borderColor}
-        textColor={textColor}
-        textSecondary={textSecondary}
-        hoverBg={hoverBg}
       />
 
       <main>
-        {/* Tampilkan "About" secara kondisional */}
-        {showAbout && (
-          <AboutSection
-            darkMode={darkMode}
-            textColor={textColor}
-            textSecondary={textSecondary}
-            borderColor={borderColor}
-          />
-        )}
-
-        {/* SearchForm (Komponen Bootstrap) */}
-        {/* Tidak perlu prop darkMode, akan di-handle `data-bs-theme` */}
+        <AboutSection />
         <SearchForm
           departments={departments}
           onSearch={handleSearch}
           initialQuery="monet"
           isLoading={departments.length === 0}
         />
-
-        {/* ArtworkGrid (Komponen Bootstrap) */}
-        {/* Tidak perlu prop darkMode */}
         <ArtworkGrid
           artworks={showFavorites ? favorites : artworks}
           isLoading={isLoading}
           error={error}
-          onArtworkClick={handleArtworkClick}
+          onArtworkClick={setSelectedArt}
           showFavorites={showFavorites}
         />
       </main>
 
-      {/* DetailModal (Komponen Bootstrap) */}
-      {/* Tidak perlu prop darkMode */}
       <DetailModal
         art={selectedArt}
         show={selectedArt !== null}
-        onHide={handleCloseModal}
-        // Kirim prop baru untuk logika favorit
+        onHide={() => setSelectedArt(null)}
         onAddFavorite={addFavorite}
         onRemoveFavorite={removeFavorite}
         isFavorite={selectedArt ? isFavorite(selectedArt.objectID) : false}

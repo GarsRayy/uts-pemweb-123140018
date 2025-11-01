@@ -1,16 +1,11 @@
 import React from 'react';
 import { Modal, Button, Image, Table, Badge } from 'react-bootstrap';
-import { Heart } from 'lucide-react'; // Import ikon Heart
+import { Heart } from 'lucide-react';
 
-// Modifikasi props untuk menerima logika favorit baru
 function DetailModal({ art, show, onHide, onAddFavorite, onRemoveFavorite, isFavorite }) {
   if (!art) return null;
 
-  // Tidak perlu `isFavorited` state di sini, `isFavorite` adalah boolean dari prop
-  
   return (
-    // Modal ini akan otomatis ganti tema (dark/light)
-    // berkat `data-bs-theme` di <html>
     <Modal show={show} onHide={onHide} size="lg" centered>
       <Modal.Header closeButton>
         <Modal.Title>{art.title || 'Artwork Detail'}</Modal.Title>
@@ -28,10 +23,7 @@ function DetailModal({ art, show, onHide, onAddFavorite, onRemoveFavorite, isFav
               <td><strong>Date</strong></td>
               <td>{art.objectDate || 'Unknown'}</td>
             </tr>
-            <tr>
-              <td><strong>Medium</strong></td>
-              <td>{art.medium || 'Unknown'}</td>
-            </tr>
+            {/* ... (row tabel lainnya) ... */}
             <tr>
               <td><strong>Culture</strong></td>
               <td>{art.culture || 'Unknown'}</td>
@@ -59,7 +51,6 @@ function DetailModal({ art, show, onHide, onAddFavorite, onRemoveFavorite, isFav
         )}
       </Modal.Body>
       <Modal.Footer>
-        {/* --- LOGIKA TOMBOL FAVORIT BARU --- */}
         {isFavorite ? (
           <Button 
             variant="outline-danger" 
@@ -70,11 +61,11 @@ function DetailModal({ art, show, onHide, onAddFavorite, onRemoveFavorite, isFav
             Remove from Favorites
           </Button>
         ) : (
+          // Menggunakan class 'btn-favorite' dari App.css
           <Button 
             variant="danger" 
             onClick={() => onAddFavorite(art)}
-            className="d-flex align-items-center gap-2"
-            style={{ backgroundColor: '#ea580c', borderColor: '#ea580c' }}
+            className="d-flex align-items-center gap-2 btn-favorite"
           >
             <Heart size={18} />
             Add to Favorites
