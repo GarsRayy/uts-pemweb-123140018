@@ -1,63 +1,120 @@
-/* src/App.css */
-
-/* Global Styling */
-body {
-  background-color: #f8f9fa;
+/* --- TEMA WARNA & VARIABLE --- */
+:root {
+  --app-accent-color: #ea580c;
+  --app-accent-color-hover: #c2410c;
+  --app-stat-color-1: #ef4444;
+  --app-stat-color-2: #ea580c;
+  --app-stat-color-3: #3b82f6;
 }
 
-.App {
-  min-height: 100vh;
+/* LIGHT MODE */
+[data-bs-theme="light"] {
+  --bs-body-bg: #f8f9fa;
+  --bs-body-color: #212529;
+  --bs-tertiary-bg: #ffffff;
+  --bs-border-color: #dee2e6;
+  --bs-text-muted: #6c757d;
+
+  --app-stat-bg-1: #fef2f2;
+  --app-stat-bg-2: #fff7ed;
+  --app-stat-bg-3: #eff6ff;
+  --app-stat-border-1: #fecaca;
+  --app-stat-border-2: #fed7aa;
+  --app-stat-border-3: #bfdbfe;
 }
 
+/* DARK MODE - COKLAT HANGAT (SEPIA) */
+[data-bs-theme="dark"] {
+  --bs-body-bg: #2b2722;
+  --bs-body-color: #e8e0d4;
+  --bs-tertiary-bg: #3a352f;
+  --bs-border-color: #5c554a;
+  --bs-text-muted: #9c907c;
+
+  --bs-card-bg: var(--bs-tertiary-bg);
+  --bs-modal-bg: var(--bs-body-bg);
+  --bs-modal-header-border-color: var(--bs-border-color);
+  --bs-modal-footer-border-color: var(--bs-border-color);
+  --bs-table-bg: var(--bs-tertiary-bg);
+  --bs-table-border-color: var(--bs-border-color);
+
+  --app-stat-bg-1: #452a2a;
+  --app-stat-bg-2: #45372a;
+  --app-stat-bg-3: #2a3545;
+  --app-stat-border-1: #7f1d1d;
+  --app-stat-border-2: #7c2d12;
+  --app-stat-border-3: #1e3a8a;
+}
+
+/* --- GLOBAL STYLE --- */
 main {
-  padding-bottom: 3rem;
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 1rem;
 }
 
-/* Styling untuk Card (ArtworkItem) */
+/* Header */
+.app-header {
+  border-bottom: 1px solid var(--bs-border-color);
+  background-color: var(--bs-body-bg);
+  color: var(--bs-body-color);
+  transition: background-color 0.2s, border-color 0.2s;
+}
+.app-header-inner {
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 1.5rem 1rem;
+}
+
+/* About Section */
+.about-section-container {
+  --card-bg-color: var(--app-stat-bg-2);
+  --card-border-color: var(--app-stat-border-2);
+  --icon-bg-color: var(--app-stat-border-2);
+  --icon-color: var(--app-accent-color);
+  --heading-color: var(--bs-body-color);
+  --text-color: var(--bs-body-color);
+}
+
+.stat-card {
+  border: 1px solid;
+  border-radius: 0.75rem;
+  padding: 1.5rem;
+}
+
+/* Card Artwork */
 .card-img-top {
   height: 250px;
   object-fit: cover;
 }
-
-.card.h-100 {
-  transition: transform 0.2s ease-out, box-shadow 0.2s ease-out;
-}
-
-/* 1. Selector Tipe: Pseudo-class (:hover) */
 .card.h-100:hover {
-  transform: translateY(-5px);
+  transform: translateY(-5px) scale(1.02);
   box-shadow: 0 8px 20px rgba(0, 0, 0, 0.08);
 }
 
-/* 2. Selector Tipe: Attribute */
+/* Form */
 input[type="text"]:focus,
 select:focus {
-  border-color: #0d6efd;
-  box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.25);
-  outline: 0;
+  border-color: var(--app-accent-color);
+  box-shadow: 0 0 0 0.25rem rgba(234, 88, 12, 0.25);
 }
 
-/* 3. Selector Tipe: Descendant (Kombinasi) */
-.modal-body .table {
-  margin-top: 1rem;
+/* Buttons */
+.btn-primary.btn-search,
+.btn-danger.btn-favorite {
+  background-color: var(--app-accent-color) !important;
+  border-color: var(--app-accent-color) !important;
+}
+.btn-primary.btn-search:hover,
+.btn-danger.btn-favorite:hover {
+  background-color: var(--app-accent-color-hover) !important;
 }
 
-.modal-body .table td:first-child {
-  font-weight: 600;
-  width: 120px;
-}
-
-/* Responsive Design (Media Query) */
+/* Responsive */
 @media (max-width: 768px) {
-  .display-4 {
-    font-size: 2.5rem;
+  .app-header-inner h1 {
+    font-size: 2rem !important;
   }
-  
-  /* Membuat tombol search full-width di mobile */
-  .d-grid .btn-primary {
-    width: 100%;
-  }
-
   .card-img-top {
     height: 200px;
   }

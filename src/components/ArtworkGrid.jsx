@@ -37,6 +37,8 @@ function ArtworkGrid({ artworks, isLoading, error, onArtworkClick }) {
 
   return (
     <Container as="section" className="my-4">
+      {/* ⭐️ xs={1} : 1 kolom di layar ekstra kecil (sudah benar)
+      // ⭐️ sm={2} : 2 kolom di layar kecil dan lebih besar */}
       <Row xs={1} sm={2} md={3} lg={4} className="g-4">
         {artworks.map(art => (
           <Col key={art.objectID}>

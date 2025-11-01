@@ -1,16 +1,16 @@
 import React from 'react';
 import { Modal, Button, Image, Table, Badge } from 'react-bootstrap';
+import { Heart } from 'lucide-react'; // Import ikon Heart
 
-function DetailModal({ art, show, onHide, onToggleFavorite, favorites }) {
+// Modifikasi props untuk menerima logika favorit baru
+function DetailModal({ art, show, onHide, onAddFavorite, onRemoveFavorite, isFavorite }) {
   if (!art) return null;
 
-  const isFavorited = favorites.includes(art.objectID);
-
-  const handleFavoriteClick = () => {
-    onToggleFavorite(art);
-  };
-
+  // Tidak perlu `isFavorited` state di sini, `isFavorite` adalah boolean dari prop
+  
   return (
+    // Modal ini akan otomatis ganti tema (dark/light)
+    // berkat `data-bs-theme` di <html>
     <Modal show={show} onHide={onHide} size="lg" centered>
       <Modal.Header closeButton>
         <Modal.Title>{art.title || 'Artwork Detail'}</Modal.Title>
@@ -59,12 +59,27 @@ function DetailModal({ art, show, onHide, onToggleFavorite, favorites }) {
         )}
       </Modal.Body>
       <Modal.Footer>
-        <Button 
-          variant={isFavorited ? "outline-danger" : "danger"} 
-          onClick={handleFavoriteClick}
-        >
-          {isFavorited ? "Remove from Favorites" : "❤️ Add to Favorites"}
-        </Button>
+        {/* --- LOGIKA TOMBOL FAVORIT BARU --- */}
+        {isFavorite ? (
+          <Button 
+            variant="outline-danger" 
+            onClick={() => onRemoveFavorite(art.objectID)}
+            className="d-flex align-items-center gap-2"
+          >
+            <Heart fill="currentColor" size={18} />
+            Remove from Favorites
+          </Button>
+        ) : (
+          <Button 
+            variant="danger" 
+            onClick={() => onAddFavorite(art)}
+            className="d-flex align-items-center gap-2"
+            style={{ backgroundColor: '#ea580c', borderColor: '#ea580c' }}
+          >
+            <Heart size={18} />
+            Add to Favorites
+          </Button>
+        )}
         <Button variant="secondary" onClick={onHide}>
           Close
         </Button>

@@ -1,40 +1,26 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { Form, Button, Row, Col, Container } from 'react-bootstrap';
+import { Search } from 'lucide-react'; // Import ikon search
 
-const DEPARTMENTS_URL = "https://collectionapi.metmuseum.org/public/collection/v1/departments";
-
-function SearchForm({ onSearch, initialQuery }) {
+// Departments sekarang di-pass dari App.jsx
+function SearchForm({ onSearch, initialQuery, departments, isLoading }) {
   const [searchTerm, setSearchTerm] = useState(initialQuery);
   const [departmentId, setDepartmentId] = useState("");
-  const [departments, setDepartments] = useState([]);
-  const [isLoading, setIsLoading] = useState(false);
-
-  useEffect(() => {
-    const fetchDepartments = async () => {
-      setIsLoading(true);
-      try {
-        const response = await fetch(DEPARTMENTS_URL);
-        if (!response.ok) throw new Error("Gagal mengambil data departemen");
-        const data = await response.json();
-        setDepartments(data.departments || []);
-      } catch (error) {
-        console.error(error);
-      } finally {
-        setIsLoading(false);
-      }
-    };
-    fetchDepartments();
-  }, []);
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    if (searchTerm) {
-      onSearch(searchTerm, departmentId);
+    // Validasi dasar
+    if (!searchTerm.trim()) {
+      // Bisa tambahkan alert/feedback di sini
+      return;
     }
+    onSearch(searchTerm, departmentId);
   };
 
   return (
-    <Container as="section" className="my-4 p-4 bg-light rounded shadow-sm">
+    // Container ini akan otomatis ganti tema (dark/light)
+    // berkat `data-bs-theme` di <html>
+    <Container as="section" className="my-4 p-4 bg-body-tertiary rounded shadow-sm">
       <Form onSubmit={handleSubmit}>
         <Row className="g-3 align-items-end">
           <Col md={6}>
@@ -45,7 +31,7 @@ function SearchForm({ onSearch, initialQuery }) {
                 placeholder="e.g., Monet, sunflowers, etc."
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
-                required
+                required // Validasi HTML5
               />
             </Form.Group>
           </Col>
@@ -55,9 +41,9 @@ function SearchForm({ onSearch, initialQuery }) {
               <Form.Select
                 value={departmentId}
                 onChange={(e) => setDepartmentId(e.target.value)}
-                disabled={isLoading}
+                disabled={isLoading} // disable saat departments di-load
               >
-                <option value="">All Departments</option>
+                <option value="">{isLoading ? "Loading..." : "All Departments"}</option>
                 {departments.map(dep => (
                   <option key={dep.departmentId} value={dep.departmentId}>
                     {dep.displayName}
@@ -67,7 +53,9 @@ function SearchForm({ onSearch, initialQuery }) {
             </Form.Group>
           </Col>
           <Col md={2}>
-            <Button variant="primary" type="submit" className="w-100">
+            {/* Menggunakan style tombol dari snippet baru */}
+            <Button variant="primary" type="submit" className="w-100 d-flex align-items-center justify-content-center gap-2" style={{ backgroundColor: '#ea580c', borderColor: '#ea580c' }}>
+              <Search size={18} />
               Search
             </Button>
           </Col>
