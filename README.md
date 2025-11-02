@@ -1,4 +1,4 @@
-<img width="209" height="451" alt="Cuplikan layar 2025-11-02 092316" src="https://github.com/user-attachments/assets/0ff465be-30fb-4dff-a4b6-dd81ebeb5174" /># UTS Pengembangan Aplikasi Web - Museum Explorer
+# UTS Pengembangan Aplikasi Web - Museum Explorer
 
 - **Nama:** Garis Rayya Rabani
 - **NIM:** 123140018
