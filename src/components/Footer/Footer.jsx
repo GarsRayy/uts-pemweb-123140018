@@ -17,7 +17,7 @@ function Footer() {
           <p>Ini adalah proyek UTS. Bukan situs web resmi The Met.</p>
         </div>
         <div className="footer-links">
-          <a href="https://github.com/google/gemini-api" target="_blank" rel="noopener noreferrer" aria-label="GitHub">
+          <a href="https://github.com/GarsRayy/uts-pemweb-123140018" target="_blank" rel="noopener noreferrer" aria-label="GitHub">
             <Github size={20} />
           </a>
           <a href="https://metmuseum.github.io/" target="_blank" rel="noopener noreferrer" aria-label="Met API">

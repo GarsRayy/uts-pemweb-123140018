@@ -2,18 +2,17 @@ import React, { useState, useEffect } from 'react';
 import Header from './components/Header/Header';
 import SearchForm from './components/SearchForm/SearchForm';
 import ArtworkGrid from './components/ArtworkGrid/ArtworkGrid';
-import DetailModal from './components/DetailModal/DetailModal'  ;
+import DetailModal from './components/DetailModal/DetailModal';
 import AboutSection from './components/AboutSection/AboutSection';
 import Footer from './components/Footer/Footer';
 import ScrollToTop from './components/ScrollToTop/ScrollToTop';
 import useLocalStorage from './hooks/useLocalStorage';
 import './App.css';
 
-// API endpoints
-// API endpoints
-const MET_API_SEARCH_URL = "/api/met/search";
-const MET_API_OBJECT_URL = "/api/met/objects";
-const MET_API_DEPTS_URL = "/api/met/departments";
+// API endpoints (Kembalikan ke URL asli)
+const MET_API_SEARCH_URL = "https://collectionapi.metmuseum.org/public/collection/v1/search";
+const MET_API_OBJECT_URL = "https://collectionapi.metmuseum.org/public/collection/v1/objects";
+const MET_API_DEPTS_URL = "https://collectionapi.metmuseum.org/public/collection/v1/departments";
 
 function App() {
   const [artworkIDs, setArtworkIDs] = useState(null);
@@ -32,10 +31,12 @@ function App() {
     document.documentElement.dataset.bsTheme = darkMode ? 'dark' : 'light';
   }, [darkMode]);
 
+  // Efek untuk fetch departemen
   useEffect(() => {
     const fetchDepartments = async () => {
       try {
-        const res = await fetch(MET_API_DEPTS_URL);
+        // --- FIX 1 DARI 4: Tambahkan referrerPolicy ---
+        const res = await fetch(MET_API_DEPTS_URL, { referrerPolicy: 'no-referrer' });
         const data = await res.json();
         setDepartments(data.departments || []);
       } catch (err) {
@@ -45,11 +46,13 @@ function App() {
     fetchDepartments();
   }, []);
 
+  // Efek untuk fetch pencarian awal
   useEffect(() => {
     setIsLoading(true);
     handleSearch('monet', '');
   }, []);
 
+  // Fungsi pencarian
   const handleSearch = async (query, departmentId) => {
     setIsLoading(true);
     setError(null);
@@ -61,7 +64,8 @@ function App() {
         ? `${MET_API_SEARCH_URL}?departmentId=${departmentId}&q=${query}&hasImages=true`
         : `${MET_API_SEARCH_URL}?q=${query}&hasImages=true`;
 
-      const res = await fetch(url);
+      // --- FIX 2 DARI 4: Tambahkan referrerPolicy ---
+      const res = await fetch(url, { referrerPolicy: 'no-referrer' });
       const data = await res.json();
 
       if (data.objectIDs && data.objectIDs.length > 0) {
@@ -69,20 +73,21 @@ function App() {
         setHasMore(data.objectIDs.length > 20);
       } else {
         setError('Tidak ada karya seni ditemukan.');
+        setArtworkIDs(null);
         setArtworks([]);
-        setIsLoading(false);
+        setHasMore(false);
       }
     } catch (err) {
       console.error('Error searching artworks:', err);
       setError('Gagal mencari karya seni.');
       setIsLoading(false);
+      setArtworkIDs(null);
     }
   };
 
+  // Efek untuk fetch detail artworks
   useEffect(() => {
-    if (!artworkIDs) return;
-    if (artworkIDs.length === 0) {
-      setArtworks([]);
+    if (!artworkIDs) {
       setIsLoading(false);
       return;
     }
@@ -91,8 +96,10 @@ function App() {
       try {
         const idsToLoad = artworkIDs.slice(0, 20);
         const promises = idsToLoad.map(id =>
-          fetch(`${MET_API_OBJECT_URL}/${id}`, { referrerPolicy: 'no-referrer' }).then(res => res.ok ? res.json() : null)
-      );
+          // --- FIX 3 DARI 4: Tambahkan referrerPolicy ---
+          fetch(`${MET_API_OBJECT_URL}/${id}`, { referrerPolicy: 'no-referrer' })
+            .then(res => res.ok ? res.json() : null)
+        );
         const results = await Promise.all(promises);
         const valid = results.filter(a => a && a.primaryImageSmall);
         setArtworks(valid);
@@ -106,16 +113,21 @@ function App() {
     fetchArtworks();
   }, [artworkIDs]);
 
+  // Fungsi Load More
   const loadMore = async () => {
     if (!artworkIDs || artworks.length >= artworkIDs.length) return;
     setIsLoadingMore(true);
     try {
       const nextIds = artworkIDs.slice(artworks.length, artworks.length + 20);
+      
       const promises = nextIds.map(id =>
-        fetch(`${MET_API_OBJECT_URL}/${id}`, { referrerPolicy: 'no-referrer' }).then(res => res.ok ? res.json() : null)
+        // --- FIX 4 DARI 4: Tambahkan referrerPolicy ---
+        fetch(`${MET_API_OBJECT_URL}/${id}`, { referrerPolicy: 'no-referrer' })
+          .then(res => res.ok ? res.json() : null)
       );
       const results = await Promise.all(promises);
       const valid = results.filter(a => a && a.primaryImageSmall);
+      
       setArtworks([...artworks, ...valid]);
       setHasMore(artworks.length + valid.length < artworkIDs.length);
     } catch {
@@ -125,6 +137,7 @@ function App() {
     }
   };
 
+  // Fungsi-fungsi favorit
   const addFavorite = (artwork) => {
     if (!favorites.find(fav => fav.objectID === artwork.objectID)) {
       setFavorites([...favorites, artwork]);
@@ -163,7 +176,7 @@ function App() {
           showFavorites={showFavorites}
           onLoadMore={loadMore}
           isLoadingMore={isLoadingMore}
-          hasMore={hasMore}
+          hasMore={hasMore && !showFavorites}
         />
       </main>
 
@@ -183,3 +196,4 @@ function App() {
 }
 
 export default App;
+
