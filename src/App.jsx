@@ -34,7 +34,7 @@ function App() {
   useEffect(() => {
     const fetchDepartments = async () => {
       try {
-        const res = await fetch(MET_API_DEPTS_URL);
+        const res = await fetch(MET_API_DEPTS_URL, { referrerPolicy: 'no-referrer' });
         const data = await res.json();
         setDepartments(data.departments || []);
       } catch (err) {
@@ -90,8 +90,8 @@ function App() {
       try {
         const idsToLoad = artworkIDs.slice(0, 20);
         const promises = idsToLoad.map(id =>
-          fetch(`${MET_API_OBJECT_URL}/${id}`).then(res => res.ok ? res.json() : null)
-        );
+          fetch(`${MET_API_OBJECT_URL}/${id}`, { referrerPolicy: 'no-referrer' }).then(res => res.ok ? res.json() : null)
+      );
         const results = await Promise.all(promises);
         const valid = results.filter(a => a && a.primaryImageSmall);
         setArtworks(valid);
@@ -111,7 +111,7 @@ function App() {
     try {
       const nextIds = artworkIDs.slice(artworks.length, artworks.length + 20);
       const promises = nextIds.map(id =>
-        fetch(`${MET_API_OBJECT_URL}/${id}`).then(res => res.ok ? res.json() : null)
+        fetch(`${MET_API_OBJECT_URL}/${id}`, { referrerPolicy: 'no-referrer' }).then(res => res.ok ? res.json() : null)
       );
       const results = await Promise.all(promises);
       const valid = results.filter(a => a && a.primaryImageSmall);
