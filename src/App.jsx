@@ -10,9 +10,10 @@ import useLocalStorage from './hooks/useLocalStorage';
 import './App.css';
 
 // API endpoints
-const MET_API_SEARCH_URL = "https://collectionapi.metmuseum.org/public/collection/v1/search";
-const MET_API_OBJECT_URL = "https://collectionapi.metmuseum.org/public/collection/v1/objects";
-const MET_API_DEPTS_URL = "https://collectionapi.metmuseum.org/public/collection/v1/departments";
+// API endpoints
+const MET_API_SEARCH_URL = "/api/met/search";
+const MET_API_OBJECT_URL = "/api/met/objects";
+const MET_API_DEPTS_URL = "/api/met/departments";
 
 function App() {
   const [artworkIDs, setArtworkIDs] = useState(null);
@@ -34,7 +35,7 @@ function App() {
   useEffect(() => {
     const fetchDepartments = async () => {
       try {
-        const res = await fetch(MET_API_DEPTS_URL, { referrerPolicy: 'no-referrer' });
+        const res = await fetch(MET_API_DEPTS_URL);
         const data = await res.json();
         setDepartments(data.departments || []);
       } catch (err) {
