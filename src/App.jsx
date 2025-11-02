@@ -4,6 +4,7 @@ import SearchForm from './components/SearchForm';
 import ArtworkGrid from './components/ArtworkGrid';
 import DetailModal from './components/DetailModal';
 import AboutSection from './components/AboutSection';
+import Footer from './components/Footer';
 import useLocalStorage from './hooks/useLocalStorage';
 import './App.css';
 
@@ -11,49 +12,60 @@ import './App.css';
 const MET_API_SEARCH_URL = "https://collectionapi.metmuseum.org/public/collection/v1/search";
 const MET_API_OBJECT_URL = "https://collectionapi.metmuseum.org/public/collection/v1/objects";
 const MET_API_DEPTS_URL = "https://collectionapi.metmuseum.org/public/collection/v1/departments";
+const PAGE_SIZE = 20; // Jumlah item per halaman
 
 function App() {
-  const [artworkIDs, setArtworkIDs] = useState(null);
+  const [allObjectIDs, setAllObjectIDs] = useState([]);
   const [artworks, setArtworks] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
+  const [isLoadingMore, setIsLoadingMore] = useState(false);
+  const [currentPage, setCurrentPage] = useState(1);
   const [error, setError] = useState(null);
   const [selectedArt, setSelectedArt] = useState(null);
   const [departments, setDepartments] = useState([]);
   const [favorites, setFavorites] = useLocalStorage('museumFavorites', []);
   const [showFavorites, setShowFavorites] = useState(false);
-
-  // Light mode default
   const [darkMode, setDarkMode] = useState(false);
 
-  // Apply theme to bootstrap
   useEffect(() => {
     document.documentElement.dataset.bsTheme = darkMode ? 'dark' : 'light';
   }, [darkMode]);
 
-  // Fetch departments
   useEffect(() => {
-    const fetchDepartments = async () => {
-      try {
-        const res = await fetch(MET_API_DEPTS_URL);
-        const data = await res.json();
-        setDepartments(data.departments || []);
-      } catch (err) {
-        console.error('Error fetching departments:', err);
-      }
-    };
     fetchDepartments();
-  }, []);
-
-  // Default search: "monet"
-  useEffect(() => {
-    setIsLoading(true);
     handleSearch("monet", "");
   }, []);
+
+  const fetchDepartments = async () => {
+    try {
+      const res = await fetch(MET_API_DEPTS_URL);
+      const data = await res.json();
+      setDepartments(data.departments || []);
+    } catch (err) {
+      console.error('Error fetching departments:', err);
+    }
+  };
+
+  const fetchArtworkDetails = async (ids) => {
+    try {
+      const promises = ids.map(id =>
+        fetch(`${MET_API_OBJECT_URL}/${id}`)
+          .then(res => res.ok ? res.json() : null)
+          .catch(() => null)
+      );
+      const results = await Promise.all(promises);
+      return results.filter(art => art && art.primaryImageSmall);
+    } catch (err) {
+      setError(`Gagal memuat detail karya seni: ${err.message}`);
+      return [];
+    }
+  };
 
   const handleSearch = async (query, departmentId) => {
     setIsLoading(true);
     setError(null);
     setArtworks([]);
+    setCurrentPage(1);
     setShowFavorites(false);
 
     try {
@@ -66,45 +78,36 @@ function App() {
       const data = await res.json();
 
       if (data.objectIDs && data.objectIDs.length > 0) {
-        setArtworkIDs(data.objectIDs.slice(0, 20));
+        setAllObjectIDs(data.objectIDs);
+        const firstPageIDs = data.objectIDs.slice(0, PAGE_SIZE);
+        const firstPageArtworks = await fetchArtworkDetails(firstPageIDs);
+        setArtworks(firstPageArtworks);
       } else {
         setError('Tidak ada karya seni ditemukan. Coba kata kunci lain.');
-        setIsLoading(false);
-        setArtworkIDs([]);
+        setAllObjectIDs([]);
       }
     } catch (err) {
       setError(err.message || 'Gagal mencari karya seni. Silakan coba lagi.');
+    } finally {
       setIsLoading(false);
     }
   };
 
-  // Fetch details for artworks
-  useEffect(() => {
-    if (!artworkIDs) return;
-    if (artworkIDs.length === 0) {
-      setArtworks([]);
-      setIsLoading(false);
-      return;
+  const handleLoadMore = async () => {
+    setIsLoadingMore(true);
+    const nextPage = currentPage + 1;
+    const startIndex = currentPage * PAGE_SIZE;
+    const endIndex = nextPage * PAGE_SIZE;
+    const newIDs = allObjectIDs.slice(startIndex, endIndex);
+
+    if (newIDs.length > 0) {
+      const newArtworks = await fetchArtworkDetails(newIDs);
+      setArtworks(prev => [...prev, ...newArtworks]);
+      setCurrentPage(nextPage);
     }
 
-    const fetchArtworkDetails = async () => {
-      try {
-        const promises = artworkIDs.map(id =>
-          fetch(`${MET_API_OBJECT_URL}/${id}`)
-            .then(res => res.ok ? res.json() : null)
-            .catch(() => null)
-        );
-        const results = await Promise.all(promises);
-        const validArtworks = results.filter(art => art && art.primaryImageSmall);
-        setArtworks(validArtworks);
-      } catch (err) {
-        setError(`Gagal memuat detail karya seni: ${err.message}`);
-      } finally {
-        setIsLoading(false);
-      }
-    };
-    fetchArtworkDetails();
-  }, [artworkIDs]);
+    setIsLoadingMore(false);
+  };
 
   const addFavorite = (artwork) => {
     if (!favorites.find(fav => fav.objectID === artwork.objectID)) {
@@ -117,6 +120,7 @@ function App() {
   };
 
   const isFavorite = (objectID) => favorites.some(fav => fav.objectID === objectID);
+  const hasMore = artworks.length < allObjectIDs.length;
 
   return (
     <div className="App">
@@ -142,6 +146,9 @@ function App() {
           error={error}
           onArtworkClick={setSelectedArt}
           showFavorites={showFavorites}
+          onLoadMore={handleLoadMore}
+          isLoadingMore={isLoadingMore}
+          hasMore={hasMore && !showFavorites}
         />
       </main>
 
@@ -153,6 +160,8 @@ function App() {
         onRemoveFavorite={removeFavorite}
         isFavorite={selectedArt ? isFavorite(selectedArt.objectID) : false}
       />
+
+      <Footer />
     </div>
   );
 }

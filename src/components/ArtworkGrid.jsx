@@ -1,9 +1,10 @@
 import React from 'react';
-import { Container, Row, Col, Alert, Spinner } from 'react-bootstrap';
+import { Container, Row, Col, Alert, Spinner, Button } from 'react-bootstrap';
 import ArtworkItem from './ArtworkItem';
-import { Heart } from 'lucide-react'; // Import ikon Heart
+import { Heart, Loader2 } from 'lucide-react'; // Import Loader2 untuk tombol
 
-function ArtworkGrid({ artworks, isLoading, error, onArtworkClick, showFavorites }) {
+// Terima prop baru
+function ArtworkGrid({ artworks, isLoading, error, onArtworkClick, showFavorites, onLoadMore, isLoadingMore, hasMore }) {
   if (isLoading) {
     return (
       <Container className="text-center my-5">
@@ -26,10 +27,8 @@ function ArtworkGrid({ artworks, isLoading, error, onArtworkClick, showFavorites
     );
   }
 
-  // Logika baru jika tidak ada artwork
   if (artworks.length === 0) {
     if (showFavorites) {
-      // Tampilan jika tab favorit kosong
       return (
         <Container className="my-5 text-center p-5 bg-body-tertiary rounded">
           <Heart size={48} className="text-muted mb-3" />
@@ -38,7 +37,6 @@ function ArtworkGrid({ artworks, isLoading, error, onArtworkClick, showFavorites
         </Container>
       );
     } else {
-      // Tampilan jika pencarian tidak menemukan apa-apa (dan bukan error)
       return (
         <Container className="my-5">
           <Alert variant="info">
@@ -49,17 +47,42 @@ function ArtworkGrid({ artworks, isLoading, error, onArtworkClick, showFavorites
     }
   }
 
-  // Tampilkan grid (logika lama dipertahankan)
   return (
     <Container as="section" className="my-4">
       <Row xs={1} sm={2} md={3} lg={4} className="g-4">
         {artworks.map(art => (
           <Col key={art.objectID}>
-            {/* ArtworkItem tidak perlu diubah, biarkan apa adanya */}
             <ArtworkItem art={art} onClick={onArtworkClick} />
           </Col>
         ))}
       </Row>
+
+      {/* --- TOMBOL LOAD MORE BARU --- */}
+      {hasMore && (
+        <div className="text-center mt-5">
+          <Button
+            variant="outline-secondary"
+            onClick={onLoadMore}
+            disabled={isLoadingMore}
+            className="load-more-btn"
+          >
+            {isLoadingMore ? (
+              <>
+                <Spinner
+                  as="span"
+                  animation="border"
+                  size="sm"
+                  role="status"
+                  aria-hidden="true"
+                />
+                <span className="ms-2">Loading...</span>
+              </>
+            ) : (
+              "Load More Artworks"
+            )}
+          </Button>
+        </div>
+      )}
     </Container>
   );
 }
