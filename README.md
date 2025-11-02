@@ -1,16 +1,55 @@
-# React + Vite
+# UTS Pengembangan Aplikasi Web - Museum Explorer
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+- **Nama:** Garis Rayya Rabani
+- **NIM:** 123140018
+- **Studi Kasus:** Digit 8 - Museum Collection Explorer
 
-Currently, two official plugins are available:
+---
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) (or [oxc](https://oxc.rs) when used in [rolldown-vite](https://vite.dev/guide/rolldown)) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+## Deskripsi Project
 
-## React Compiler
+Aplikasi ini adalah sebuah portal untuk menjelajahi koleksi karya seni dari Metropolitan Museum of Art (Met Museum). Pengguna dapat mencari karya seni berdasarkan kata kunci, memfilter berdasarkan departemen, melihat detail karya, dan menyimpan karya favorit mereka.
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+Project ini dibuat untuk memenuhi Ujian Tengah Semester mata kuliah Pengembangan Aplikasi Web.
 
-## Expanding the ESLint configuration
+## Fitur
+- Pencarian karya seni berdasarkan kata kunci.
+- Filter karya seni berdasarkan departemen.
+- Tampilan galeri (grid) dengan *lazy loading* / *load more*.
+- Tampilan detail untuk setiap karya seni (via Modal).
+- Fitur "Add to Favorite" yang disimpan di LocalStorage.
+- Dark Mode / Light Mode toggle.
+- Tombol Scroll to Top.
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+## Link Deployment Vercel
+
+**[LINK DEPLOYMENT VERCEL KAMU DI SINI]** *(Contoh: https://uts-pemweb-123140018.vercel.app)*
+
+---
+
+**Tampilan Utama (Desktop):**
+![Screenshot Desktop](./screenshot/desktop.png) 
+*(pastikan kamu buat folder screenshot dan taruh filenya di sana)*
+
+**Tampilan Detail (Mobile):**
+![Screenshot Mobile](./screenshot/mobile.png)
+
+---
+## Cara Instalasi dan Menjalankan
+
+1.  Clone repository ini:
+    ```bash
+    git clone [https://github.com/](https://github.com/)[username-kamu]/uts-pemweb-123140018.git
+    ```
+2.  Masuk ke direktori project:
+    ```bash
+    cd uts-pemweb-123140018
+    ```
+3.  Install dependencies:
+    ```bash
+    npm install
+    ```
+4.  Jalankan aplikasi di mode development:
+    ```bash
+    npm run dev
+    ```

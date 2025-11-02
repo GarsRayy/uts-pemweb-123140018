@@ -1,6 +1,6 @@
 import React from 'react';
 import { Container, Row, Col, Alert, Spinner, Button } from 'react-bootstrap';
-import ArtworkItem from '../ArtworkItem';
+import ArtworkItem from './ArtworkItem';
 import ArtworkItemSkeleton from './ArtworkItemSkeleton';
 import { Heart } from 'lucide-react';
 

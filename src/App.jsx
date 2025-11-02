@@ -1,11 +1,11 @@
 import React, { useState, useEffect } from 'react';
-import Header from './components/Header';
-import SearchForm from './components/SearchForm';
-import ArtworkGrid from './components/ArtworkGrid';
-import DetailModal from './components/DetailModal';
-import AboutSection from './components/AboutSection';
-import Footer from './components/Footer';
-import ScrollToTop from './components/ScrollToTop';
+import Header from './components/Header/Header';
+import SearchForm from './components/SearchForm/SearchForm';
+import ArtworkGrid from './components/ArtworkGrid/ArtworkGrid';
+import DetailModal from './components/DetailModal/DetailModal'  ;
+import AboutSection from './components/AboutSection/AboutSection';
+import Footer from './components/Footer/Footer';
+import ScrollToTop from './components/ScrollToTop/ScrollToTop';
 import useLocalStorage from './hooks/useLocalStorage';
 import './App.css';
 
