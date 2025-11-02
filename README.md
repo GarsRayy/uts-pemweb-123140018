@@ -27,12 +27,17 @@ Project ini dibuat untuk memenuhi Ujian Tengah Semester mata kuliah Pengembangan
 
 ---
 
-**Tampilan Utama (Desktop):**
-![Screenshot Desktop](./screenshot/desktop.png) 
-*(pastikan kamu buat folder screenshot dan taruh filenya di sana)*
+**Tampilan Utama (Desktop) DarkMode:**<br>
+<img width="589" height="551" alt="Cuplikan layar 2025-11-02 092446" src="https://github.com/user-attachments/assets/1212f53b-457b-4576-906b-d17f4512e103" />
 
-**Tampilan Detail (Mobile):**
-![Screenshot Mobile](./screenshot/mobile.png)
+**Tampilan Utama (Desktop) Lightmode:**<br>
+<img width="592" height="558" alt="Cuplikan layar 2025-11-02 092502" src="https://github.com/user-attachments/assets/08ed77d9-6c59-4c9f-a74a-9f8310009480" />
+
+**Tampilan Detail (Mobile) Darkmode:**<br>
+<img width="211" height="454" alt="Cuplikan layar 2025-11-02 092326" src="https://github.com/user-attachments/assets/1f03e1c5-a568-4d5d-b8fb-29aeebdf947d" />
+
+**Tampilan Detail (Mobile) Lightmode:**<br>
+<img width="209" height="451" alt="Cuplikan layar 2025-11-02 092316" src="https://github.com/user-attachments/assets/1486508a-06ea-4049-bd77-fdf1f5739f04" />
 
 ---
 ## Cara Instalasi dan Menjalankan
