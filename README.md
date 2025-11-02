@@ -23,7 +23,7 @@ Project ini dibuat untuk memenuhi Ujian Tengah Semester mata kuliah Pengembangan
 
 ## Link Deployment Vercel
 
-**[LINK DEPLOYMENT VERCEL KAMU DI SINI]** *(Contoh: https://uts-pemweb-123140018.vercel.app)*
+https://uts-pemweb-123140018.vercel.app<br>
 
 ---
 
